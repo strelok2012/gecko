@@ -120,6 +120,10 @@ speechRecognition.directive("editable", function () {
                 const isOtherControl = window.navigator.platform !== 'MacIntel' && e.ctrlKey
                 const isDownCtrl = isMacMeta || isOtherControl
                 const systemKeys = [ 65, 88, 67, 86, 90, 89] // a, x, c, v, z, y
+                if (isDownCtrl && systemKeys.includes(e.which)) {
+                    return
+                }
+
                 if (isDownCtrl || isAlt) {
                     if (e.which === 32) {
                         this.blur()
@@ -131,9 +135,6 @@ speechRecognition.directive("editable", function () {
                 }
 
                 if (isDownCtrl && e.which !== 91) { // not a only ctrl button
-                    if (systemKeys.includes(e.which)) {
-                        return
-                    }
                     this.blur()
                     scope.keysMapping({keys: e.key, which: e.which})
                     e.preventDefault()
