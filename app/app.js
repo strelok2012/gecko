@@ -1,9 +1,12 @@
 import '../static/css/bootstrap.min.theme_paper.css'
 import '../static/css/app.css'
+import '../static/css/noUiSlider.css'
 
 import '../static/js/bootstrap.min.js'
 
 import 'video.js/dist/video-js.min.css'
+
+import 'nouislider/distribute/nouislider.css'
 
 import {MainController} from './controller.js'
 import {dataManager} from './dataManager.js'
@@ -13,10 +16,11 @@ import dropdown from 'angular-ui-bootstrap/src/dropdown'
 import modal from 'angular-ui-bootstrap/src/modal'
 import collapse from 'angular-ui-bootstrap/src/collapse'
 import tooltip from 'angular-ui-bootstrap/src/tooltip'
+import noUiSliderModule from 'angularjs-nouislider'
 import './third-party/localStorageDB.js'
 import {playPartDirective} from './playPartDirective'
 
-var speechRecognition = angular.module('speechRecognition', [dropdown, modal, collapse, tooltip]);
+var speechRecognition = angular.module('speechRecognition', [dropdown, modal, collapse, tooltip, noUiSliderModule]);
 
 speechRecognition.controller('MainController', MainController);
 

@@ -75,6 +75,13 @@ class MainController {
         this.isServerMode = false
         this.shortcuts = new Shortcuts(this, constants)
         this.shortcuts.bindKeys()
+        this.currentGainProc = constants.DEFAULT_GAIN * 100
+        this.volumeSliderOptions = {
+            range: {
+                min: 0,
+                max: 100
+            }
+        }
     }
 
     loadApp(config) {

@@ -1,0 +1,10 @@
+/**** Custom styles for noUiSlider ****/
+.noUi-connect {
+	background: purple;
+}
+.noUi-horizontal .noUi-handle, .noUi-vertical .noUi-handle {
+	background: purple;
+}
+.noUi-target.noUi-horizontal .noUi-tooltip {
+	background-color: purple;
+}
