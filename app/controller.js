@@ -172,7 +172,7 @@ class MainController {
         this.eventBus.on('editableFocus', (editableRegion, fileIndex) => {
             this.selectedRegion = editableRegion
             this.selectedFileIndex = fileIndex
-            this.seek(editableRegion.start)
+            this.seek(editableRegion.start, 'right')
             //this.eventBus.trigger('proofReadingScroll', editableRegion, fileIndex)
         })
 
@@ -645,7 +645,7 @@ class MainController {
             const ret = []
             this.iterateRegions((r) => {
                 ret.push(r)
-            }, i)
+            }, i, true)
             this.allRegions[i] = ret.reduce((acc, current) => {
                 const last = acc[acc.length - 1]
                 if (last && last.length) {
@@ -1054,6 +1054,11 @@ class MainController {
         //the list order matters!
         this.undoStack.push([first.id, second.id, region.id])
         this.regionsHistory[region.id].push(null);
+
+        this.$timeout(() => {
+            this.setAllRegions()
+            this.eventBus.trigger('rebuildProofReading', this.selectedRegion, this.selectedFileIndex)
+        })
     }
 
     deleteRegionAction(region) {
@@ -1162,20 +1167,25 @@ class MainController {
         }
     }
 
-    async saveS3(extension, converter) {
+    async saveS3() {
         try {
             await this.dataBase.clearDB()
         } catch (e) {
         }
+        const fileNameSpl = this.filesData[0].filename.split('.')
+        const extension = fileNameSpl[fileNameSpl.length - 1]
+        const converter = convertTextFormats(extension, this, config.parserOptions)
         for (var i = 0; i < this.filesData.length; i++) {
             var current = this.filesData[i];
             if (current.data) {
-                // convert the filename to "rttm" extension
                 var filename = current.filename.substr(0, current.filename.lastIndexOf('.')) + "." + extension;
 
                 if (!this.checkValidRegions(i)) return;
+                try {
+                    this.dataManager.saveDataToServer(converter(i), { filename, s3Subfolder: current.s3Subfolder });
+                } catch (e) {
 
-                this.dataManager.saveDataToServer(converter(i), { filename, s3Subfolder: current.s3Subfolder });
+                }
             }
         }
     }
@@ -1185,20 +1195,8 @@ class MainController {
             this.filesData[0].filename + "_VS_" + this.filesData[1].filename + ".json");
     }
 
-    saveData() {
-        for (var i = 0; i < this.filesData.length; i++) {
-            const current = this.filesData[i]
-            const splName = current.filename.split('.')
-            const extension = splName[splName.length - 1]
-            const saveFunction = this.isServerMode ? this.saveS3.bind(this) : this.save.bind(this)
-            saveFunction(extension, convertTextFormats(extension, this, config.parserOptions))
-        }
-    }
-
     saveClient(extension) {
-        for (var i = 0; i < this.filesData.length; i++) {
-            this.save(extension, convertTextFormats(extension, this, config.parserOptions))
-        }
+        this.save(extension, convertTextFormats(extension, this, config.parserOptions))
     }
 
     checkValidRegions(fileIndex) {
@@ -1680,9 +1678,11 @@ class MainController {
         if (!this.proofReadingView) {
             this.$timeout(() => this.eventBus.trigger('resetEditableWords'))
         } else {
-            for (let i = 0; i < this.filesData.length; i++) {
-                this.eventBus.trigger('proofReadingScrollToSelected')
-            }
+            this.$timeout(() => {
+                for (let i = 0; i < this.filesData.length; i++) {
+                    this.eventBus.trigger('proofReadingScrollToSelected')
+                }
+            })
         }
     }
 }
