@@ -130,7 +130,6 @@ class GeckoEdtior {
         const selection = document.getSelection()
         const range = selection.getRangeAt(0)
         const rangeOffset = range.startOffset
-        const previousSpace = firstNode.previousSibling
 
         const nextWord = lastNode.nextSibling
         const newText = text && text !== ' ' ? `${firstNode.textContent.substring(0, rangeOffset)}${text}${nextWord.textContent}` : `${firstNode.textContent.substring(0, rangeOffset)}${nextWord.textContent}`
@@ -142,12 +141,7 @@ class GeckoEdtior {
 
         const newRange = document.createRange()
 
-        if (rangeOffset !== 0) {
-            newRange.setStart(firstNode.firstChild, text ? rangeOffset + text.length : rangeOffset)
-        } else {
-            newRange.setStart(previousSpace.firstChild, previousSpace.firstChild.length)
-            newRange.collapse()
-        }
+        newRange.setStart(firstNode.firstChild, text ? rangeOffset + text.length : rangeOffset)
         
         selection.removeAllRanges()
         selection.addRange(newRange)
