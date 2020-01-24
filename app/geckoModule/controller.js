@@ -1452,7 +1452,14 @@ class MainController {
             const urlArr = config.audio.url.split('/')
             const audioFileName = urlArr[urlArr.length - 1]
             self.audioFileName = audioFileName
-            res.segmentFiles.forEach(x => x.data = self.handleTextFormats(x.filename, x.data));
+            res.segmentFiles.forEach((x) => {
+                const data = self.handleTextFormats(x.filename, x.data)
+                x.data = Array.isArray(data) ? data[0] : data
+                const parsedColors = Array.isArray(data) && data.length > 1 ? data[1] : null
+                if (parsedColors) {
+                    self.fileSpeakerColors = parsedColors
+                }
+            });
             self.filesData = res.segmentFiles;
 
             if (config.enableDrafts && this.dataBase) {
