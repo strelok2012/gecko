@@ -1888,6 +1888,10 @@ class MainController {
             this.setMergedRegions()
             this.eventBus.trigger('proofReadingScrollToSelected')
 
+            this.$timeout(() => {
+                this.updateSelectedWordInFiles()
+            })
+
             this.userConfig.showWaveform = false
             this.userConfig.showSegmentLabeling = false
             this.userConfig.showTranscriptDifferences = false

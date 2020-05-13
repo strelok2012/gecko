@@ -18,6 +18,7 @@ class GeckoEdtior {
 
     init () {
         this.element.setAttribute('contenteditable', true)
+        this.element.setAttribute('gecko-editor', true)
         this.bindEvents()
     }
 
@@ -36,6 +37,7 @@ class GeckoEdtior {
     }
 
     clickEvent (e) {
+        console.log('click')
         const selection = window.getSelection()
         const clickedSpan = selection.anchorNode.parentNode
         if (e.ctrlKey || e.metaKey) {
@@ -678,6 +680,7 @@ class GeckoEdtior {
         // console.log('set reg')
         if (region && region.data.words) {
             this.region = region
+            this.element.setAttribute('data-region', region.id)
             this.setWords(region.data.words)
         }
     }
